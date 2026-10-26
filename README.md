@@ -1,95 +1,90 @@
-# Details zu Bewertungsaspekten (local_gradeitemdetail)
+# Grade item details (local_gradeitemdetail)
 
-Ergänzt **manuelle Bewertungsaspekte** um ein zusätzliches Textfeld. Der Text wird
-Teilnehmer/innen in der Bewertungsübersicht als Pop-up angezeigt, wenn sie auf den
-Namen des Bewertungsaspekts klicken.
+Adds an extra text field to **manual grade items**. Participants see the text in a pop-up when they click the
+name of the grade item in their grade overview.
 
-Getestet gegen Moodle 5.1 (`$plugin->requires` ist auf 4.5 gesetzt).
+## Requirements
 
-## Was das Plugin macht
+- **Moodle 4.5 or later** (`$plugin->requires = 2024100700`). Tested against Moodle 5.1.
+- JavaScript must be enabled in the browser (see *Known limitations*).
 
-**Für Lehrkräfte** gibt es zwei Wege zum Feld **„Details für Teilnehmer/innen"**, beide
-mit dem normalen Moodle-Editor (Formatierung, Links, Bilder):
+## What the plugin does
 
-- *Bewertungen → Setup für Bewertungen* (und ebenso die *Bewerterübersicht*): Im
-  Aktionsmenü jedes manuellen Bewertungsaspekts steht direkt unter „Bewertungsaspekt
-  bearbeiten" der Eintrag **„Details für Teilnehmer/innen bearbeiten"**. Er öffnet den
-  Text in einem eigenen Modal und speichert ihn sofort.
-- Die Vollseite *Bewertungsaspekt bearbeiten* (`/grade/edit/tree/item.php`, im
-  Core-Modal über „Mehr anzeigen…"): Dort steht das Feld direkt unter „Info zum Aspekt"
-  und wird zusammen mit dem übrigen Formular gespeichert. Nur hier lässt sich der Text
-  schon beim Anlegen eines neuen Aspekts erfassen.
+**Teachers** have two ways to reach the **"Details for participants"** field, both with the standard Moodle
+editor (formatting, links, images):
 
-**Für Teilnehmer/innen** – *Bewertungen → Übersicht für Teilnehmer/in*
-(`/grade/report/user/index.php`, ebenso `/course/user.php?mode=grade`): Namen manueller
-Bewertungsaspekte mit hinterlegtem Text werden zu einer Schaltfläche mit Info-Symbol.
-Ein Klick öffnet den Text in einem Modal.
+- *Grades → Gradebook setup* (and likewise the *Grader report*): in the action menu of every manual grade item,
+  directly below "Edit grade item", there is an entry **"Edit details for participants"**. It opens the text in
+  a modal of its own and saves it straight away.
+- The full *Edit grade item* page (`/grade/edit/tree/item.php`, reached from core's modal via "Show more…"):
+  there the field sits directly below "Item info" and is saved together with the rest of the form. This is the
+  only place where the text can be entered while creating a new grade item.
 
-Aktivitäts-Bewertungsaspekte (Aufgabe, Test, …) bleiben unangetastet – dort setzt Moodle
-bereits einen eigenen Link auf die Aktivität, mit dem sich das Pop-up sonst überschneiden
-würde. Kategorie- und Kurs-Aspekte ebenfalls nicht.
+**Participants** – *Grades → User report* (`/grade/report/user/index.php`, likewise
+`/course/user.php?mode=grade`): names of manual grade items that have a text become a button with an info icon.
+Clicking it opens the text in a modal.
 
-## Einstellung
+Activity grade items (assignment, quiz, …) are left alone – Moodle already links them to their activity, and the
+pop-up would clash with that link. Category and course items are not changed either.
 
-*Website-Administration → Plugins → Lokale Plugins → Details zu Bewertungsaspekten*
+## Settings
 
-- **Details in der Teilnehmerübersicht anzeigen** (Standard: an) – schaltet nur die
-  Anzeige ab; bereits erfasste Texte bleiben erhalten.
+*Site administration → Plugins → Local plugins → Grade item details*
 
-## Wie es technisch funktioniert
+- **Show details in the participant overview** (default: on) – only switches off the display; texts that have
+  already been entered are kept.
 
-Moodle-Core bietet für `edit_item_form` keinen Erweiterungspunkt – weder einen Hook noch
-einen Callback. Das Plugin geht deshalb so vor:
+## How it works
 
-1. Im Hook `before_footer_html_generation` wird ein echtes
-   `MoodleQuickForm_editor`-Element serverseitig gerendert (inklusive Entwurfsbereich für
-   Dateien) und in den Seitenfuß geschrieben.
-2. Ein kurzes Inline-Skript verschiebt das Feld synchron – also bevor irgendein
-   AMD-Modul startet – in das Core-Formular unter `#fitem_id_iteminfo`. Würde man den
-   Editor erst nach seiner Initialisierung verschieben, lüde der Browser dessen iframe
-   neu und der Inhalt ginge verloren.
-3. Beim Absenden wird das Feld ganz normal mit dem Formular gepostet. Ein Observer auf
-   `\core\event\grade_item_created` / `grade_item_updated` greift es in genau dem Moment
-   ab, in dem Core den Bewertungsaspekt speichert. So wird der Text nur gespeichert, wenn
-   das umgebende Formular auch validiert hat – und ein neu angelegter Aspekt funktioniert
-   ebenfalls, denn dessen ID existiert erst dann.
+Moodle core offers no extension point for `edit_item_form` – neither a hook nor a callback. The plugin therefore
+works like this:
 
-`\core\event\grade_item_deleted` räumt Datensatz und eingebettete Dateien wieder ab.
+1. In the `before_footer_html_generation` hook, a real `MoodleQuickForm_editor` element is rendered on the
+   server (including a draft area for files) and written into the page footer.
+2. A short inline script moves the field synchronously – before any AMD module starts – into the core form below
+   `#fitem_id_iteminfo`. Moving the editor after it has initialised would make the browser reload its iframe and
+   lose the content.
+3. On submit, the field is posted with the form as usual. An observer on `\core\event\grade_item_created` /
+   `grade_item_updated` picks it up at exactly the moment core saves the grade item. That way the text is only
+   stored if the surrounding form validated – and a newly created grade item works too, because its id only
+   exists at that point.
 
-Das Core-Modal „Bewertungsaspekt bearbeiten" (`core_grades\form\add_item`) hat keinen
-Erweiterungspunkt und speichert über einen Webservice, an dessen Formulardaten ein
-Observer nicht herankommt. Deshalb hat der Text dort ein eigenes Formular
-(`local_gradeitemdetail\form\detail`). Das AMD-Modul `local_gradeitemdetail/setup`
-setzt den Menüeintrag neben Cores Eintrag `[data-trigger="add-item-form"]` jedes
-manuellen Aspekts.
+`\core\event\grade_item_deleted` removes the record and the embedded files again.
 
-### Backup und Wiederherstellung
+Core's "Edit grade item" modal (`core_grades\form\add_item`) has no extension point and saves through a web
+service whose form data an observer cannot reach. That is why the text has a form of its own there
+(`local_gradeitemdetail\form\detail`). The AMD module `local_gradeitemdetail/setup` places the menu entry next to
+core's `[data-trigger="add-item-form"]` entry of every manual grade item.
 
-Die Texte hängen am `grade_item`-Element von `gradebook.xml`
-(`backup/moodle2/`), samt eingebetteter Dateien. Sie wandern damit bei Kurssicherung,
-Wiederherstellung und Kurskopie mit – und fehlen in genau den Fällen, in denen Moodle
-selbst das Gradebook nicht wiederherstellt (etwa beim Zusammenführen in einen Kurs mit
-eigener Kategorienstruktur oder wenn Aktivitäten abgewählt wurden). Wer einen Text
-zuletzt geändert hat, wird nicht mitgesichert.
+### Backup and restore
 
-## Bekannte Einschränkungen
+The texts are attached to the `grade_item` element of `gradebook.xml` (`backup/moodle2/`), together with their
+embedded files. They therefore travel with course backups, restores and course copies – and are missing in exactly
+the cases in which Moodle itself does not restore the gradebook (for example when merging into a course with its
+own category structure, or when activities have been deselected). Who last changed a text is not backed up.
 
-- **Ohne JavaScript** gibt es weder den Menüeintrag noch das Feld auf der Vollseite.
-  Bereits gespeicherte Texte bleiben unberührt.
-- Beide Wege hängen an Cores DOM-Struktur: der Menüeintrag an
-  `[data-trigger="add-item-form"]`, das Feld auf der Vollseite an `#fitem_id_iteminfo`
-  (ersatzweise am Formular selbst). Bei einem größeren Umbau des Gradebooks in einer
-  künftigen Moodle-Version sind das die Punkte, die zuerst nachgezogen werden müssen.
-  Findet das Skript auf der Vollseite kein Formular, blendet es das Feld aus, statt
-  Eingaben anzunehmen, die nicht gespeichert würden.
+## Known limitations
+
+- **Without JavaScript** there is neither the menu entry nor the field on the full page. Texts that have already
+  been saved are not affected.
+- Both ways depend on core's DOM structure: the menu entry on `[data-trigger="add-item-form"]`, the field on the
+  full page on `#fitem_id_iteminfo` (falling back to the form itself). If a future Moodle version reworks the
+  gradebook substantially, these are the first places to adapt. If the script finds no form on the full page, it
+  hides the field rather than accept input that would not be saved.
 
 ## Installation
 
-Verzeichnis als `local/gradeitemdetail` in die Moodle-Installation legen
-(bei Moodle 5.x: `public/local/gradeitemdetail`), dann *Website-Administration →
-Mitteilungen* aufrufen und die Datenbankaktualisierung bestätigen. Anschließend
-**alle Caches löschen**, damit das AMD-Modul ausgeliefert wird.
+From Moodle 5.1, plugins live in the `public` directory:
 
-## Lizenz
+```bash
+cp -r local_gradeitemdetail /path/to/moodle/public/local/gradeitemdetail
+php admin/cli/upgrade.php
+```
 
-GNU GPL v3 oder später – siehe [LICENSE](LICENSE).
+On Moodle 4.5 and 5.0 the target is `/path/to/moodle/local/gradeitemdetail`. Alternatively, open
+*Site administration → Notifications* and confirm the database upgrade. Afterwards **purge all caches** so the
+AMD modules are delivered.
+
+## License
+
+GNU GPL v3 or later – see [LICENSE](LICENSE).
