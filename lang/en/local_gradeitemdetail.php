@@ -30,6 +30,9 @@ $string['detailfield'] = 'Details for participants';
 $string['detailfield_help'] = 'Shown to participants in the grade overview: the name of this grade item becomes clickable and opens this text in a pop-up. Leave empty to keep the name plain. Only available for manual grade items.';
 
 $string['viewdetails'] = 'Show details on this grade item';
+$string['editdetail'] = 'Edit details for participants';
+$string['detailsaved'] = 'Details for participants saved.';
+$string['notmanualitem'] = 'Details can only be added to manual grade items.';
 
 $string['showinuserreport'] = 'Show details in the participant overview';
 $string['showinuserreport_desc'] = 'Make the names of manual grade items that have a detail text clickable in the participant grade overview.';

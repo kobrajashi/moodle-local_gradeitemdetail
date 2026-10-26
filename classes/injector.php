@@ -22,10 +22,13 @@ use html_writer;
 /**
  * Decides what this plugin adds to the page currently being rendered.
  *
- * Two entirely separate jobs live here:
+ * Three entirely separate jobs live here:
  *
  *  - On /grade/edit/tree/item.php an extra editor field is added to the core
  *    "edit grade item" form (teacher side).
+ *  - On the gradebook setup page and the grader report, the action menu of
+ *    every manual grade item gets an entry that opens the detail text in a
+ *    modal form of its own (teacher side).
  *  - On the participant grade overview the manual grade item names are turned
  *    into buttons that open the detail text in a modal (student side).
  *
@@ -51,6 +54,13 @@ class injector {
 
         if ($pagetype === 'grade-edit-tree-item') {
             return self::edit_form_field();
+        }
+
+        // Both pages offer core's "Edit grade item" action menu entry, which
+        // opens the modal form that has no room for the detail text.
+        if ($pagetype === 'grade-edit-tree-index' || $pagetype === 'grade-report-grader-index') {
+            self::add_menu_entries();
+            return '';
         }
 
         // 'course-user' is the course level "Grades" page for one participant,
@@ -213,6 +223,37 @@ class injector {
 JS;
 
         return html_writer::script($js);
+    }
+
+    // ------------------------------------------------------------------
+    // Teacher side: action menu entry next to "Edit grade item".
+    // ------------------------------------------------------------------
+
+    /**
+     * Queue the AMD module that adds the menu entry for each manual item.
+     *
+     * @return void
+     */
+    private static function add_menu_entries(): void {
+        global $CFG, $PAGE;
+
+        $course = $PAGE->course ?? null;
+        if (!$course || $course->id == SITEID) {
+            return;
+        }
+        if (!has_capability('moodle/grade:manage', context_course::instance($course->id))) {
+            return;
+        }
+
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $gradeitems = \grade_item::fetch_all(['courseid' => $course->id, 'itemtype' => 'manual']) ?: [];
+        if (!$gradeitems) {
+            return;
+        }
+
+        $itemids = array_map('intval', array_keys($gradeitems));
+        $PAGE->requires->js_call_amd('local_gradeitemdetail/setup', 'init', [$itemids]);
     }
 
     // ------------------------------------------------------------------

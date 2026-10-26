@@ -30,6 +30,9 @@ $string['detailfield'] = 'Details für Teilnehmer/innen';
 $string['detailfield_help'] = 'Wird Teilnehmer/innen in der Bewertungsübersicht angezeigt: Der Name dieses Bewertungsaspekts wird anklickbar und öffnet diesen Text in einem Pop-up. Leer lassen, damit der Name unverändert bleibt. Nur für manuelle Bewertungsaspekte verfügbar.';
 
 $string['viewdetails'] = 'Details zu diesem Bewertungsaspekt anzeigen';
+$string['editdetail'] = 'Details für Teilnehmer/innen bearbeiten';
+$string['detailsaved'] = 'Details für Teilnehmer/innen gespeichert.';
+$string['notmanualitem'] = 'Details lassen sich nur zu manuellen Bewertungsaspekten hinzufügen.';
 
 $string['showinuserreport'] = 'Details in der Teilnehmerübersicht anzeigen';
 $string['showinuserreport_desc'] = 'Namen von manuellen Bewertungsaspekten mit hinterlegtem Detailtext in der Bewertungsübersicht der Teilnehmer/innen anklickbar machen.';
