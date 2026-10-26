@@ -1,0 +1,29 @@
+/* Grade item detail - participant facing trigger in the grade overview. */
+.local-gradeitemdetail-link {
+    border: 0;
+    text-align: left;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.local-gradeitemdetail-link:hover,
+.local-gradeitemdetail-link:focus {
+    text-decoration: underline;
+}
+
+.local-gradeitemdetail-link .icon {
+    margin-left: 0.25rem;
+    font-size: 0.85em;
+    vertical-align: baseline;
+}
+
+/* Detail text inside the modal: keep long content readable and scrollable. */
+.local-gradeitemdetail-modal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.local-gradeitemdetail-modal .modal-body img {
+    max-width: 100%;
+    height: auto;
+}
