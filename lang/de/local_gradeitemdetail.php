@@ -34,4 +34,8 @@ $string['viewdetails'] = 'Details zu diesem Bewertungsaspekt anzeigen';
 $string['showinuserreport'] = 'Details in der Teilnehmerübersicht anzeigen';
 $string['showinuserreport_desc'] = 'Namen von manuellen Bewertungsaspekten mit hinterlegtem Detailtext in der Bewertungsübersicht der Teilnehmer/innen anklickbar machen.';
 
-$string['privacy:metadata'] = 'Das Plugin „Details zu Bewertungsaspekten" speichert von Lehrkräften verfasste Beschreibungen, keine personenbezogenen Daten der Teilnehmer/innen.';
+$string['privacy:metadata:local_gradeitemdetail'] = 'Von Lehrkräften verfasste Detailtexte zu manuellen Bewertungsaspekten. Personenbezogen ist nur, wer einen Text zuletzt geändert hat.';
+$string['privacy:metadata:local_gradeitemdetail:detail'] = 'Der Detailtext, der Teilnehmer/innen angezeigt wird.';
+$string['privacy:metadata:local_gradeitemdetail:gradeitemid'] = 'Der Bewertungsaspekt, zu dem der Text gehört.';
+$string['privacy:metadata:local_gradeitemdetail:timemodified'] = 'Wann der Text zuletzt geändert wurde.';
+$string['privacy:metadata:local_gradeitemdetail:usermodified'] = 'Die Person, die den Text zuletzt geändert hat.';

@@ -72,10 +72,10 @@ define(['core/modal', 'core/str', 'core/notification'], function(Modal, Str, Not
      * Replace the plain item title with a button that opens the modal.
      *
      * @param {HTMLElement} cell
-     * @param {object}      item      {id, name, html}
-     * @param {string}      ariaLabel localised label for screen readers
+     * @param {object}      item   {id, name, html}
+     * @param {string}      srText localised hint for screen readers
      */
-    function decorate(cell, item, ariaLabel) {
+    function decorate(cell, item, srText) {
         cell.setAttribute(PROCESSED, '1');
 
         var title = cell.querySelector('.rowtitle');
@@ -87,9 +87,15 @@ define(['core/modal', 'core/str', 'core/notification'], function(Modal, Str, Not
         var button = document.createElement('button');
         button.type = 'button';
         button.className = 'btn btn-link p-0 local-gradeitemdetail-link';
-        button.setAttribute('aria-label', ariaLabel);
         // The existing markup comes from Moodle's own renderer and is safe.
         button.innerHTML = title.innerHTML;
+
+        // Appended rather than set as aria-label: an aria-label would replace
+        // the item name, leaving every button with the same accessible name.
+        var hint = document.createElement('span');
+        hint.className = 'local-gradeitemdetail-srtext';
+        hint.textContent = ' ' + srText;
+        button.appendChild(hint);
 
         var icon = document.createElement('i');
         icon.className = 'icon fa fa-circle-info fa-fw';
@@ -116,13 +122,13 @@ define(['core/modal', 'core/str', 'core/notification'], function(Modal, Str, Not
                 return;
             }
 
-            Str.get_string('viewdetails', 'local_gradeitemdetail').then(function(label) {
+            Str.get_string('viewdetails', 'local_gradeitemdetail').then(function(srText) {
                 items.forEach(function(item) {
                     findCells(item.id).forEach(function(cell) {
-                        decorate(cell, item, label);
+                        decorate(cell, item, srText);
                     });
                 });
-                return label;
+                return srText;
             }).catch(Notification.exception);
         }
     };

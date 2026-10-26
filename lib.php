@@ -25,18 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Legacy before_footer callback - Moodle 4.x.
- *
- * On versions that support both the callback and the hook API the static guard
- * inside the injector keeps the work from happening twice.
- *
- * @return string
- */
-function local_gradeitemdetail_before_footer(): string {
-    return \local_gradeitemdetail\injector::run();
-}
-
-/**
  * Serve files embedded in a grade item detail text.
  *
  * @param stdClass $course
@@ -63,12 +51,24 @@ function local_gradeitemdetail_pluginfile($course, $cm, $context, $filearea, $ar
 
     require_once($CFG->libdir . '/gradelib.php');
 
+    // Same gate as the participant overview, which is the only place these
+    // files are shown: the editor serves its own copies from the draft area.
+    if (!get_config('local_gradeitemdetail', 'showinuserreport')) {
+        return false;
+    }
+    if (!has_any_capability(['moodle/grade:view', 'moodle/grade:viewall'], $context)) {
+        return false;
+    }
+
     $gradeitemid = (int)array_shift($args);
     $gradeitem = grade_item::fetch(['id' => $gradeitemid, 'courseid' => $context->instanceid]);
     if (!\local_gradeitemdetail\api::supports_item($gradeitem ?: null)) {
         return false;
     }
     if ($gradeitem->is_hidden() && !has_capability('moodle/grade:viewhidden', $context)) {
+        return false;
+    }
+    if (!\local_gradeitemdetail\api::has_detail(\local_gradeitemdetail\api::get_record($gradeitemid))) {
         return false;
     }
 

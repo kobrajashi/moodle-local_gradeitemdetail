@@ -37,7 +37,7 @@ class observer {
      * @return void
      */
     public static function grade_item_created(grade_item_created $event): void {
-        self::persist((int)$event->objectid, (int)$event->courseid);
+        self::persist((int)$event->objectid, (int)$event->courseid, true);
     }
 
     /**
@@ -47,7 +47,7 @@ class observer {
      * @return void
      */
     public static function grade_item_updated(grade_item_updated $event): void {
-        self::persist((int)$event->objectid, (int)$event->courseid);
+        self::persist((int)$event->objectid, (int)$event->courseid, false);
     }
 
     /**
@@ -68,11 +68,12 @@ class observer {
      * so every other code path that saves grade items (imports, bulk actions,
      * activity updates) is unaffected.
      *
-     * @param int $gradeitemid
-     * @param int $courseid
+     * @param int  $gradeitemid
+     * @param int  $courseid
+     * @param bool $created true for grade_item_created, false for grade_item_updated
      * @return void
      */
-    private static function persist(int $gradeitemid, int $courseid): void {
+    private static function persist(int $gradeitemid, int $courseid, bool $created): void {
         global $CFG;
 
         $submitted = optional_param_array(api::ELEMENT, null, PARAM_RAW);
@@ -80,6 +81,14 @@ class observer {
             return;
         }
         if ($gradeitemid <= 0 || $courseid <= 0) {
+            return;
+        }
+
+        // Only the item the form was about: item.php posts its id, 0 when it
+        // creates a new one. Any other item saved in the same request keeps
+        // its own text.
+        $formitemid = optional_param('id', 0, PARAM_INT);
+        if ($created ? $formitemid !== 0 : $formitemid !== $gradeitemid) {
             return;
         }
 

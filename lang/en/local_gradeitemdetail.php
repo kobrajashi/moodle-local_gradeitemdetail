@@ -34,4 +34,8 @@ $string['viewdetails'] = 'Show details on this grade item';
 $string['showinuserreport'] = 'Show details in the participant overview';
 $string['showinuserreport_desc'] = 'Make the names of manual grade items that have a detail text clickable in the participant grade overview.';
 
-$string['privacy:metadata'] = 'The Grade item details plugin stores descriptions written by teachers, not personal data about participants.';
+$string['privacy:metadata:local_gradeitemdetail'] = 'Detail texts written by teachers for manual grade items. The only personal data is who last changed a text.';
+$string['privacy:metadata:local_gradeitemdetail:detail'] = 'The detail text shown to participants.';
+$string['privacy:metadata:local_gradeitemdetail:gradeitemid'] = 'The grade item the text belongs to.';
+$string['privacy:metadata:local_gradeitemdetail:timemodified'] = 'When the text was last changed.';
+$string['privacy:metadata:local_gradeitemdetail:usermodified'] = 'The user who last changed the text.';

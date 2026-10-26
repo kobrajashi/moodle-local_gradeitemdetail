@@ -43,13 +43,6 @@ class injector {
     public static function run(): string {
         global $PAGE;
 
-        // Guard: the legacy callback and the hook can both fire on 4.x.
-        static $done = false;
-        if ($done) {
-            return '';
-        }
-        $done = true;
-
         // Page type rather than URL: it is derived from the running script, so
         // it is immune to subdirectory installs. Note that $PAGE->url must not
         // be tested with empty() - moodle_page exposes it through __get() and
@@ -195,12 +188,27 @@ class injector {
     var anchor = document.getElementById('fitem_id_iteminfo')
         || document.getElementById('fitem_id_idnumber')
         || document.getElementById('fitem_id_itemname');
-    if (!field || !anchor || !anchor.parentNode) {
-        // Leave the field where it is rather than losing it entirely.
+    if (field && anchor && anchor.parentNode) {
+        anchor.parentNode.insertBefore(field, anchor.nextSibling);
+        wrap.parentNode.removeChild(wrap);
         return;
     }
-    anchor.parentNode.insertBefore(field, anchor.nextSibling);
-    wrap.parentNode.removeChild(wrap);
+    // Without a known anchor the field must still end up inside the form:
+    // left in the footer, whatever is typed into it is never submitted.
+    var marker = document.querySelector('input[name="_qf__edit_item_form"]');
+    var form = marker ? marker.form : null;
+    if (field && form) {
+        var buttons = document.getElementById('fgroup_id_buttonar');
+        if (buttons && buttons.parentNode && form.contains(buttons)) {
+            buttons.parentNode.insertBefore(field, buttons);
+        } else {
+            form.appendChild(field);
+        }
+        wrap.parentNode.removeChild(wrap);
+        return;
+    }
+    // No form to put it in: hide the field rather than offer one that cannot save.
+    wrap.style.display = 'none';
 })();
 JS;
 
@@ -243,13 +251,16 @@ JS;
         $context = context_course::instance($course->id);
         $canviewhidden = has_capability('moodle/grade:viewhidden', $context);
 
+        // One query for all manual items instead of one per record.
+        $gradeitems = \grade_item::fetch_all(['courseid' => $course->id, 'itemtype' => 'manual']) ?: [];
+
         $items = [];
         foreach ($records as $gradeitemid => $record) {
             if (!api::has_detail($record)) {
                 continue;
             }
-            $gradeitem = \grade_item::fetch(['id' => $gradeitemid, 'courseid' => $course->id]);
-            if (!api::supports_item($gradeitem ?: null)) {
+            $gradeitem = $gradeitems[$gradeitemid] ?? null;
+            if (!api::supports_item($gradeitem)) {
                 continue;
             }
             if ($gradeitem->is_hidden() && !$canviewhidden) {
