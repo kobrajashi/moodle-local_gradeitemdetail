@@ -24,21 +24,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Grade item details';
-
 $string['detailfield'] = 'Details for participants';
 $string['detailfield_help'] = 'Shown to participants in the grade overview: the name of this grade item becomes clickable and opens this text in a pop-up. Leave empty to keep the name plain. Only available for manual grade items.';
-
-$string['viewdetails'] = 'Show details on this grade item';
-$string['editdetail'] = 'Edit details for participants';
 $string['detailsaved'] = 'Details for participants saved.';
+$string['editdetail'] = 'Edit details for participants';
 $string['notmanualitem'] = 'Details can only be added to manual grade items.';
-
-$string['showinuserreport'] = 'Show details in the participant overview';
-$string['showinuserreport_desc'] = 'Make the names of manual grade items that have a detail text clickable in the participant grade overview.';
-
+$string['pluginname'] = 'Grade item details';
 $string['privacy:metadata:local_gradeitemdetail'] = 'Detail texts written by teachers for manual grade items. The only personal data is who last changed a text.';
 $string['privacy:metadata:local_gradeitemdetail:detail'] = 'The detail text shown to participants.';
 $string['privacy:metadata:local_gradeitemdetail:gradeitemid'] = 'The grade item the text belongs to.';
 $string['privacy:metadata:local_gradeitemdetail:timemodified'] = 'When the text was last changed.';
 $string['privacy:metadata:local_gradeitemdetail:usermodified'] = 'The user who last changed the text.';
+$string['showinuserreport'] = 'Show details in the participant overview';
+$string['showinuserreport_desc'] = 'Make the names of manual grade items that have a detail text clickable in the participant grade overview.';
+$string['viewdetails'] = 'Show details on this grade item';

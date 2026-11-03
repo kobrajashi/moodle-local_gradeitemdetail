@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Serve files embedded in a grade item detail text.
  *
@@ -36,8 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  * @param array    $options
  * @return bool false if the file could not be served
  */
-function local_gradeitemdetail_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload,
-        array $options = []) {
+function local_gradeitemdetail_pluginfile(
+    $course,
+    $cm,
+    $context,
+    $filearea,
+    $args,
+    $forcedownload,
+    array $options = []
+) {
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_COURSE) {

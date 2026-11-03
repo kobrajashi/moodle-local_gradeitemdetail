@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace local_gradeitemdetail\form;
 
 use context;
@@ -34,7 +35,6 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class detail extends dynamic_form {
-
     /**
      * Form definition.
      *
@@ -114,8 +114,15 @@ class detail extends dynamic_form {
             'detail'       => $record->detail ?? '',
             'detailformat' => (int) ($record->detailformat ?? FORMAT_HTML),
         ];
-        $data = file_prepare_standard_editor($data, 'detail', api::editor_options($context), $context,
-            'local_gradeitemdetail', api::FILEAREA, $itemid);
+        $data = file_prepare_standard_editor(
+            $data,
+            'detail',
+            api::editor_options($context),
+            $context,
+            'local_gradeitemdetail',
+            api::FILEAREA,
+            $itemid
+        );
 
         $this->set_data($data);
     }
@@ -130,8 +137,15 @@ class detail extends dynamic_form {
         $data = $this->get_data();
         $itemid = (int) $data->itemid;
 
-        $data = file_postupdate_standard_editor($data, 'detail', api::editor_options($context), $context,
-            'local_gradeitemdetail', api::FILEAREA, $itemid);
+        $data = file_postupdate_standard_editor(
+            $data,
+            'detail',
+            api::editor_options($context),
+            $context,
+            'local_gradeitemdetail',
+            api::FILEAREA,
+            $itemid
+        );
         api::save($itemid, (int) $data->courseid, (string) $data->detail, (int) $data->detailformat);
 
         return ['result' => true];

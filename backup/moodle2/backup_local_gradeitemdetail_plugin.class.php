@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Backup support for local_gradeitemdetail.
  *
@@ -26,13 +27,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Adds the detail text of a grade item to the gradebook backup.
  */
 class backup_local_gradeitemdetail_plugin extends backup_local_plugin {
-
     /**
      * Attach the detail text to every backed-up grade item.
      *

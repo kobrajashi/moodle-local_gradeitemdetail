@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Restore support for local_gradeitemdetail.
  *
@@ -25,13 +26,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Restores the detail text of a grade item.
  */
 class restore_local_gradeitemdetail_plugin extends restore_local_plugin {
-
     /**
      * Declare the path we expect inside each grade item of the gradebook.
      *

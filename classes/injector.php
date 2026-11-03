@@ -37,7 +37,6 @@ use html_writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class injector {
-
     /**
      * Entry point for the footer hook.
      *
@@ -63,10 +62,12 @@ class injector {
             return '';
         }
 
-        // 'course-user' is the course level "Grades" page for one participant,
+        // The 'course-user' page is the course level "Grades" page for one participant,
         // which embeds the very same user report.
-        if ($pagetype === 'grade-report-user-index'
-                || ($pagetype === 'course-user' && optional_param('mode', '', PARAM_ALPHA) === 'grade')) {
+        if (
+            $pagetype === 'grade-report-user-index'
+                || ($pagetype === 'course-user' && optional_param('mode', '', PARAM_ALPHA) === 'grade')
+        ) {
             self::decorate_user_report();
             return '';
         }
@@ -74,9 +75,7 @@ class injector {
         return '';
     }
 
-    // ------------------------------------------------------------------
     // Teacher side: extra field in the grade item edit form.
-    // ------------------------------------------------------------------
 
     /**
      * Build the detail editor for /grade/edit/tree/item.php.
@@ -225,9 +224,7 @@ JS;
         return html_writer::script($js);
     }
 
-    // ------------------------------------------------------------------
     // Teacher side: action menu entry next to "Edit grade item".
-    // ------------------------------------------------------------------
 
     /**
      * Queue the AMD module that adds the menu entry for each manual item.
@@ -256,9 +253,7 @@ JS;
         $PAGE->requires->js_call_amd('local_gradeitemdetail/setup', 'init', [$itemids]);
     }
 
-    // ------------------------------------------------------------------
     // Participant side: clickable grade item names.
-    // ------------------------------------------------------------------
 
     /**
      * Queue the AMD module that makes manual grade items with a detail text

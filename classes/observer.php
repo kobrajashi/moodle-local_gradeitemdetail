@@ -29,7 +29,6 @@ use core\event\grade_item_updated;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
-
     /**
      * A grade item was just created - store the submitted detail text, if any.
      *

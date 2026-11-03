@@ -39,10 +39,9 @@ use local_gradeitemdetail\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\core_userlist_provider,
-        \core_privacy\local\request\plugin\provider {
-
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
     /**
      * Describe the stored personal data.
      *
@@ -111,8 +110,11 @@ class provider implements
                 continue;
             }
 
-            $records = $DB->get_records(api::TABLE,
-                ['courseid' => $context->instanceid, 'usermodified' => $userid], 'gradeitemid');
+            $records = $DB->get_records(
+                api::TABLE,
+                ['courseid' => $context->instanceid, 'usermodified' => $userid],
+                'gradeitemid'
+            );
             if (!$records) {
                 continue;
             }
@@ -123,8 +125,13 @@ class provider implements
             foreach ($records as $record) {
                 $details[] = (object)[
                     'gradeitemid'  => $record->gradeitemid,
-                    'detail'       => $writer->rewrite_pluginfile_urls($subcontext, 'local_gradeitemdetail',
-                        api::FILEAREA, $record->gradeitemid, $record->detail ?? ''),
+                    'detail'       => $writer->rewrite_pluginfile_urls(
+                        $subcontext,
+                        'local_gradeitemdetail',
+                        api::FILEAREA,
+                        $record->gradeitemid,
+                        $record->detail ?? ''
+                    ),
                     'timemodified' => transform::datetime($record->timemodified),
                 ];
                 $writer->export_area_files($subcontext, 'local_gradeitemdetail', api::FILEAREA, $record->gradeitemid);
@@ -162,8 +169,12 @@ class provider implements
             if (!$context instanceof context_course) {
                 continue;
             }
-            $DB->set_field(api::TABLE, 'usermodified', 0,
-                ['courseid' => $context->instanceid, 'usermodified' => $userid]);
+            $DB->set_field(
+                api::TABLE,
+                'usermodified',
+                0,
+                ['courseid' => $context->instanceid, 'usermodified' => $userid]
+            );
         }
     }
 
